@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/* Palette matched pixel-by-pixel against the exported screens in "dashboard figma/" */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #1f7a4d; /* buttons, active nav, page title accent */
+  --color-primary-dark: #145c3a; /* hover state */
+  --color-primary-soft: #eef2ee; /* active nav row bg */
+  --color-page: #eef2ee; /* app background */
+  --color-card: #ffffff;
+  --color-line: #e6eae6; /* borders / dividers */
+  --color-line-strong: #d7ddd7;
+  --color-table-head: #eef1ee; /* table header band */
+
+  --color-ink: #16241b; /* headings, stat numbers */
+  --color-body: #374151; /* table cell text */
+  --color-muted: #6b7280; /* secondary text, icons */
+  --color-label: #6b7280; /* uppercase small labels */
+
+  --color-success: #1f7a4d;
+  --color-success-bg: #dcf1e2; /* Active / Delivered pill bg */
+  --color-success-text: #1f7a4d;
+
+  --color-neutral-bg: #eef1ee; /* Inactive pill bg */
+  --color-neutral-text: #4b5563;
+
+  --color-pending-bg: #fdecd2; /* PENDING pill bg */
+  --color-pending-text: #b7791f;
+
+  --color-danger: #dc2626;
+  --color-danger-bg: #fde3e2; /* Suspend / Rejected pill bg */
+  --color-danger-text: #dc2626;
+  --color-danger-solid: #e0433a; /* ACTION REQUIRED solid pill */
+
+  --color-login-ink: #111827;
+  --color-login-muted: #6b7280;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-heading {
+  font-family: var(--font-heading);
+}

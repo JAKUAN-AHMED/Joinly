@@ -1,0 +1,45 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { ActivitiesModule } from './modules/activities/activities.module';
+import { ParticipantsModule } from './modules/participants/participants.module';
+import { FavoritesModule } from './modules/favorites/favorites.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
+import { HealthController } from './health.controller';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({ useFactory: typeOrmConfig }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_ACCESS_SECRET || 'change-me-access-secret',
+      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '1d' },
+    }),
+    AuthModule,
+    UsersModule,
+    CategoriesModule,
+    ActivitiesModule,
+    ParticipantsModule,
+    FavoritesModule,
+    NotificationsModule,
+    DashboardModule,
+    UploadsModule,
+  ],
+  controllers: [HealthController],
+  providers: [
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
+})
+export class AppModule {}

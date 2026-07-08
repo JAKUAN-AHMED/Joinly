@@ -1,0 +1,11 @@
+# Figma design source files (too large for git, not source code)
+*.fig
+Section 2.jpg
+dashboard figma/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db

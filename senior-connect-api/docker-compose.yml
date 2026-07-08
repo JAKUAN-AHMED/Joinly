@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: senior-connect-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_DATABASE:-senior_connect}
+    ports:
+      - '${DB_PORT:-5433}:5432'
+    volumes:
+      - senior-connect-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-senior_connect}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  senior-connect-db-data:
+    name: senior-connect-db-data
