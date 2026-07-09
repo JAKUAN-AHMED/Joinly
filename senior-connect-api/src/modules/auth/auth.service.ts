@@ -47,18 +47,28 @@ export class AuthService {
   /** Figma "Create Account" */
   async register(dto: RegisterDto): Promise<ServiceResponse<RegisterResponse>> {
     const existing = await this.userRepository.findOne({ where: { email: dto.email } });
-    if (existing) throw new ConflictException('An account with this email already exists');
 
-    const user = this.userRepository.create({
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      email: dto.email,
-      password: await bcrypt.hash(dto.password, 10),
-      phoneNumber: dto.phoneNumber ?? null,
-      dateOfBirth: dto.dateOfBirth ?? null,
-      language: dto.language ?? 'English (United States)',
-      status: UserStatus.Pending,
-    });
+    // Only a fully verified account blocks re-registration. An email that was
+    // registered but never verified can be re-submitted any number of times —
+    // we refresh its details and send a fresh OTP each time.
+    if (existing && existing.isEmailVerified) {
+      throw new ConflictException('An account with this email already exists');
+    }
+
+    const user =
+      existing ??
+      this.userRepository.create({
+        email: dto.email,
+      });
+
+    user.firstName = dto.firstName;
+    user.lastName = dto.lastName;
+    user.password = await bcrypt.hash(dto.password, 10);
+    user.phoneNumber = dto.phoneNumber ?? null;
+    user.dateOfBirth = dto.dateOfBirth ?? null;
+    user.language = dto.language ?? user.language ?? 'English (United States)';
+    user.status = UserStatus.Pending;
+    user.isEmailVerified = false;
     await this.userRepository.save(user);
     await this.issueOtp(dto.email, OtpType.VerifyEmail);
 
