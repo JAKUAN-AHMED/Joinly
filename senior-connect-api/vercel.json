@@ -1,0 +1,4 @@
+{
+  "framework": "nestjs",
+  "outputDirectory": "dist"
+}
