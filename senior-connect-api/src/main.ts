@@ -11,7 +11,12 @@ async function bootstrap(): Promise<void> {
 
   const apiPrefix = process.env.API_PREFIX || 'api/v1';
   app.setGlobalPrefix(apiPrefix);
-  app.enableCors();
+  // CORS_ORIGINS: comma-separated allowlist (production); unset = allow all (local dev)
+  const corsOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  app.enableCors(corsOrigins.length ? { origin: corsOrigins, credentials: true } : undefined);
 
   app.useGlobalPipes(
     new ValidationPipe({
