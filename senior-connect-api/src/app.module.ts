@@ -15,6 +15,7 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { ContactModule } from './modules/contact/contact.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -35,6 +36,7 @@ import { HealthController } from './health.controller';
     NotificationsModule,
     DashboardModule,
     UploadsModule,
+    ContactModule,
   ],
   controllers: [HealthController],
   providers: [
