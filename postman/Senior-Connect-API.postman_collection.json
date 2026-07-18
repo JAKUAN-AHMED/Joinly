@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "f7c2a1d4-9b3e-4c5a-8f6d-2e1b0a9c8d7e",
 		"name": "Senior Connect API",
-		"description": "Backend API for the Senior Connect Platform (\"Activity Together\") — Mobile App + Admin Dashboard.\n\nNestJS + TypeScript + PostgreSQL/TypeORM. Field names follow the Figma designs exactly.\n\n**Setup**\n1. Run the API: `cd senior-connect-api && npm run start:dev` (default `http://localhost:5000/api/v1`).\n2. Seed data: `npm run seed` → admin `admin@contenthub.io` / `admin123` + 13 Figma categories.\n3. Run **Auth (Admin) → Admin Login** and **Auth (Mobile) → Login** first — tokens are captured automatically into `{{adminAccessToken}}` / `{{accessToken}}`.\n\nAll responses use the envelope `{ success, message, data, meta? }`.",
+		"description": "Backend API for the Senior Connect Platform (\"Activity Together\") — Mobile App + Admin Dashboard.\n\nNestJS + TypeScript + PostgreSQL/TypeORM. Field names follow the Figma designs exactly.\n\n**Setup**\n1. Run the API: `cd senior-connect-api && npm run start:dev` (default `http://localhost:5000/api/v1`).\n2. Seed data: `npm run seed` → admin `admin@contenthub.io` / `admin123` + 13 Figma categories.\n3. Run **Auth (Admin) → Admin Login** and **Auth (Mobile) → Login** first — tokens are captured automatically into `{{adminAccessToken}}` / `{{accessToken}}`.\n\nAll responses use the envelope `{ success, message, data, meta? }`.\n\nLIVE DEPLOYMENT: set {{baseUrl}} to {{baseUrlLive}} (https://senior-connect-api.vercel.app/api/v1) to test against production. Notes: password must be 6-8 chars; register requires acceptTerms:true; verify-otp type is VerifyEmail or ResetPassword; favorites list returns the activity id in activityId.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -44,6 +44,11 @@
 		{
 			"key": "notificationId",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "baseUrlLive",
+			"value": "https://senior-connect-api.vercel.app/api/v1",
 			"type": "string"
 		}
 	],
@@ -187,7 +192,7 @@
 						"description": "Figma \"OTP verification\". Activates the account and returns tokens. Also used with `type: \"ResetPassword\"` in the forgot-password flow. Auto-saves {{accessToken}}.",
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"jean.moreau@example.com\",\n  \"otpCode\": \"123456\"\n}",
+							"raw": "{\n  \"email\": \"jean.moreau@example.com\",\n  \"otpCode\": \"123456\",\n  \"type\": \"VerifyEmail\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
