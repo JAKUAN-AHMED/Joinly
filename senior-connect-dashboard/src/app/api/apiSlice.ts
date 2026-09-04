@@ -3,217 +3,50 @@
  *
  * Endpoints mirror senior-connect-api exactly — same routes, same
  * Figma-derived field names, same `{ success, message, data, meta? }` envelope.
- * Types mirror the backend's *.interface.ts files 1:1.
+ * Wire types live in ./types and are re-exported here so pages can keep
+ * importing them from the slice.
+ *
+ * When VITE_USE_MOCKS is not "false" the slice talks to the in-memory backend
+ * in src/mocks instead of the network — see mockBaseQuery.
  */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 import type { AuthUser } from '../authSlice';
+import { USE_MOCKS, mockBaseQuery } from '../../mocks/mockBaseQuery';
+import type {
+  ActivityCard,
+  ActivityDetails,
+  AdminCategoryRow,
+  AdminCategoryStats,
+  AdminUserDetails,
+  AdminUserRow,
+  ApiEnvelope,
+  Audience,
+  CategoryDistributionRow,
+  CategoryItem,
+  CategoryStatus,
+  DashboardStatistics,
+  NotificationRow,
+  RecentActivityRow,
+  RecentUserRow,
+  UploadResult,
+  UserStatus,
+} from './types';
 
-export interface ApiEnvelope<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  meta?: { page: number; limit: number; total: number; totalPages: number };
-}
+export * from './types';
 
-export type UserStatus = 'Pending' | 'Active' | 'Inactive' | 'Suspended' | 'Blocked';
-export type ActivityStatus = 'Draft' | 'Pending' | 'Approved' | 'Rejected' | 'Cancelled' | 'Completed';
-export type CategoryStatus = 'Active' | 'Disabled';
-export type NotificationStatus = 'Delivered' | 'Failed';
-export type Audience = 'Everyone' | 'Seniors' | 'Volunteers';
-export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced';
-
-export interface CategoryItem {
-  id: string;
-  categoryName: string;
-  status: CategoryStatus;
-}
-
-export interface AdminCategoryRow extends CategoryItem {
-  activityCount: number;
-}
-
-export interface AdminCategoryStats {
-  totalCategories: number;
-  activeNow: number;
-}
-
-export interface AdminUserRow {
-  id: string;
-  firstName: string;
-  lastName: string;
-  profilePhoto: string | null;
-  email: string;
-  country: string | null;
-  activities: number;
-  status: UserStatus;
-  dateJoined: string;
-}
-
-export interface UserInterest {
-  id: string;
-  categoryName: string;
-}
-
-export interface UserActivityHistoryRow {
-  id: string;
-  activityName: string;
-  categoryName: string;
-  activityDate: string;
-  status: ActivityStatus;
-}
-
-export interface AdminUserDetails {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string | null;
-  dateOfBirth: string | null;
-  language: string;
-  profilePhoto: string | null;
-  country: string | null;
-  region: string | null;
-  city: string | null;
-  role: string;
-  status: UserStatus;
-  dateFormat: string;
-  notificationSounds: boolean;
-  allowNotifications: boolean;
-  isEmailVerified: boolean;
-  memberSince: string;
-  activityJoined: number;
-  activityCreated: number;
-  connections: number;
-  interests: UserInterest[];
-  activitiesJoined: number;
-  activitiesCreated: number;
-  joinedActivities: UserActivityHistoryRow[];
-  createdActivities: UserActivityHistoryRow[];
-}
-
-export interface ActivityOrganizerBrief {
-  id: string;
-  firstName: string;
-  lastName: string;
-  profilePhoto: string | null;
-}
-
-export interface ActivityCard {
-  id: string;
-  activityName: string;
-  activityPhoto: string | null;
-  categoryName: string;
-  activityDate: string;
-  activityTime: string;
-  activityLocation: string;
-  latitude: number | null;
-  longitude: number | null;
-  participants: string;
-  joinedCount: number;
-  maximumNumberOfParticipants: number;
-  distanceKm: number | null;
-  status: ActivityStatus;
-  organizer: ActivityOrganizerBrief;
-}
-
-export interface ActivityDetails {
-  id: string;
-  activityName: string;
-  activityPhoto: string | null;
-  category: { id: string; categoryName: string };
-  activityDate: string;
-  activityTime: string;
-  activityLocation: string;
-  latitude: number | null;
-  longitude: number | null;
-  distanceKm: number | null;
-  participants: string;
-  joinedCount: number;
-  maximumNumberOfParticipants: number;
-  participantAvatars: (string | null)[];
-  descriptions: string;
-  difficulty: Difficulty;
-  activityEquipment: string | null;
-  activityDuration: string;
-  organizer: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    profilePhoto: string | null;
-  };
-  minAge: number;
-  maxAge: number;
-  ageLimit: string;
-  price: number | null;
-  status: ActivityStatus;
-  rejectionReason: string | null;
-  isJoined: boolean;
-  isFavorite: boolean;
-  createdAt: string;
-}
-
-export interface NotificationRow {
-  id: string;
-  notificationTitle: string;
-  messageContent: string;
-  audience: Audience;
-  sentDate: string;
-  status: NotificationStatus;
-}
-
-export interface DashboardStatistics {
-  totalUsers: number;
-  totalActivities: number;
-  totalRegistrations: number;
-  pendingApprovals: number;
-}
-
-export interface CategoryDistributionRow {
-  categoryName: string;
-  activityCount: number;
-  percentage: number;
-}
-
-export interface RecentUserRow {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePhoto: string | null;
-  dateJoined: string;
-  status: UserStatus;
-}
-
-export interface RecentActivityRow {
-  id: string;
-  activityName: string;
-  activityPhoto: string | null;
-  activityLocation: string;
-  categoryName: string;
-  activityDate: string;
-  status: ActivityStatus;
-}
-
-export interface UploadResult {
-  fileName: string;
-  originalName: string;
-  mimeType: string;
-  size: number;
-  url: string;
-}
+const liveBaseQuery = fetchBaseQuery({
+  baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api/v1',
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.accessToken;
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  },
+});
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api/v1',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.accessToken;
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: USE_MOCKS ? mockBaseQuery : liveBaseQuery,
   tagTypes: ['Dashboard', 'Users', 'User', 'Activities', 'Activity', 'Categories', 'Notifications'],
   endpoints: (builder) => ({
     // ---- Auth ----
