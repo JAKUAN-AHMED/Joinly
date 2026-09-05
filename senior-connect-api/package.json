@@ -12,6 +12,7 @@
     "seed:demo": "ts-node src/seed-demo.ts",
     "db:sync-indexes": "ts-node src/sync-indexes.ts",
     "db:migrate-audience": "ts-node src/migrate-audience.ts",
+    "db:fix-photos": "ts-node src/db-fix-photos.ts",
     "typecheck": "tsc --noEmit",
     "test:smoke": "bash scripts/smoke.sh",
     "test:phone": "bash scripts/smoke-phone.sh",

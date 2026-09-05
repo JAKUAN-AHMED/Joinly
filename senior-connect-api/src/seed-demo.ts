@@ -17,15 +17,17 @@ import { ActivitySchema } from './modules/activities/schemas';
 import { ActivityParticipantSchema } from './modules/participants/schemas';
 import { NotificationSchema, UserNotificationSchema } from './modules/notifications/schemas';
 import { UserInterestSchema, UserSchema } from './modules/users/schemas';
+import { activityPhotoUrl, avatarUrl } from './stock-photos';
 
 const DEMO_PASSWORD = 'password123';
 const daysAgo = (n: number): Date => new Date(Date.now() - n * 24 * 60 * 60 * 1000);
 const daysFromNow = (n: number): string =>
   new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-/** Real, viewable photos (not placeholders) — Pravatar for faces, Picsum for activity photos. */
-const avatarUrl = (pravatarId: number): string => `https://i.pravatar.cc/300?img=${pravatarId}`;
-const activityPhotoUrl = (slug: string): string => `https://picsum.photos/seed/${slug}/640/480`;
+// Real, viewable photos (not placeholders): Pravatar for faces, curated
+// Wikimedia Commons photography for activities. Both resolve from any network.
+// The catalogue lives in `stock-photos.ts` so that `db-fix-photos.ts` repairs
+// existing rows to exactly what a fresh seed would produce.
 
 const demoUsers: Array<{
   firstName: string;
